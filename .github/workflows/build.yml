@@ -13,21 +13,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
 
       - name: Restore packages
-        run: nuget restore FocusBlocker.sln
+        run: dotnet restore FocusBlocker/FocusBlocker.csproj
 
       - name: Build Release
-        run: msbuild FocusBlocker.sln /p:Configuration=Release /p:Platform="Any CPU"
+        run: dotnet build FocusBlocker/FocusBlocker.csproj -c Release --no-restore
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
           name: FocusBlocker-EXE
-          path: FocusBlocker/bin/Release/FocusBlocker.exe
+          path: FocusBlocker/bin/Release/net48/FocusBlocker.exe
           if-no-files-found: error
